@@ -1,34 +1,31 @@
-# ------------------------------
+
 # VPC Module
-# ------------------------------
+
 module "vpc" {
-  source              = "../../Modules/VPC"
+  source              = "./Modules/VPC"
   vpc_cidr            = var.vpc_cidr
   public_subnets      = var.public_subnets
   private_subnets     = var.private_subnets
   availability_zones  = var.availability_zones
 }
 
-# ------------------------------
 # IAM Module
-# ------------------------------
+
 module "iam" {
-  source = "../../Modules/IAM"
+  source = "./Modules/IAM"
 }
 
-# ------------------------------
+
 # ECR Module
-# ------------------------------
 module "ecr" {
-  source    = "../../Modules/ECR"
+  source    = "./Modules/ECR"
   repo_name = var.repo_name
 }
 
-# ------------------------------
 # EKS Module (Cluster & Node Group)
-# ------------------------------
+
 module "eks" {
-  source           = "../../Modules/EKS"
+  source           = "./Modules/EKS"
   cluster_name     = var.cluster_name
   vpc_id           = module.vpc.vpc_id
   subnet_ids       = module.vpc.private_subnets
