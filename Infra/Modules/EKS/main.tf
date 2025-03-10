@@ -35,7 +35,54 @@ resource "aws_security_group" "eks_sg" {
     Name = "eks-cluster-sg"
   }
 }
+resource "kubernetes_deployment" "Patientdeployment" {
+  metadata {
+    name      = "patient-deployment"
+    namespace = "default"
+  }
+  spec {
+    replicas = 1
+    selector {
+      match_labels = {
+        app = "patient-deployment"  # Ensure this matches the service selector
+      }
+    }
+    template {
+      metadata {
+        labels = {
+          app = "patient-deployment"
+        }
+      }
+      spec {
+        container {
+          name  = "patient-container"
+          image = var.patient_image
+          port {
+            container_port = 3000
+          }
+        }
+      }
+    }
+  }
+}
 
+resource "kubernetes_service" "PatientService" {
+  metadata {
+    name      = "patient-service"
+    namespace = "default"
+  }
+  spec {
+    selector = {
+      app = "patient-deployment"  # Update to match the deployment label
+    }
+    port {
+      protocol   = "TCP"
+      port       = 3000
+      target_port = 3000
+    }
+    type = "LoadBalancer"
+  }
+}
 resource "aws_eks_cluster" "eks" {
   name     = var.cluster_name
   role_arn = var.eks_cluster_role_arn
@@ -94,7 +141,7 @@ resource "kubernetes_deployment" "Appointmentdeployment" {
       spec {
         container {
           name  = "appointment-container"
-          image = var.image_url
+          image = var.appointment_image
           port {
             container_port = 3001
           }
