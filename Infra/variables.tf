@@ -36,10 +36,14 @@ variable "repo_name" {
 
 # In the variables.tf of the EKS module
 
-variable "image_url" {
+variable "patient_image" {
   description = "The URL of the Appointment service Docker image in ECR"
   type        = string
+}
 
+variable "appointment_image" {
+  description = "The URL of the Appointment service Docker image in ECR"
+  type        = string
 }
 
 # ------------------------------
