@@ -23,13 +23,6 @@ resource "aws_security_group" "eks_sg" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]  # Allow HTTPS traffic from anywhere
   }
-  
-  ingress {
-    from_port   = 3000
-    to_port     = 3000
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]  # Allow HTTPS traffic from anywhere
-  }
 
   ingress {
     from_port   = 3001
@@ -129,83 +122,21 @@ resource "kubernetes_service" "AppointmentService" {
   }
 }
 
-resource "kubernetes_deployment" "Patientdeployment" {
-  metadata {
-    name      = "patient-deployment"
-    namespace = "default"
-  }
-  spec {
-    replicas = 1
-    selector {
-      match_labels = {
-        app = "patient-deployment"  # Ensure this matches the service selector
-      }
-    }
-    template {
-      metadata {
-        labels = {
-          app = "patient-deployment"
-        }
-      }
-      spec {
-        container {
-          name  = "patient-container"
-          image = var.image_url_patient
-          port {
-            container_port = 3000
-          }
-        }
-      }
-    }
-  }
-}
-
-resource "kubernetes_service" "PatientService" {
-  metadata {
-    name      = "patient-service"
-    namespace = "default"
-  }
-  spec {
-    selector = {
-      app = "patient-deployment"  # Update to match the deployment label
-    }
-    port {
-      protocol   = "TCP"
-      port       = 3000
-      target_port = 3000
-    }
-    type = "LoadBalancer"
-  }
-}
-
-
 
 resource "helm_release" "prometheus" {
-
   name       = "prometheus"
-
   repository = "https://prometheus-community.github.io/helm-charts"
-
   chart      = "kube-prometheus-stack"
-
   namespace  = "monitoring"
-
   create_namespace = true
- 
   set {
-
     name  = "server.global.scrape_interval"
-
     value = "15s"
-
   }
  
   set {
-
     name  = "prometheus.service.type"
-
     value = "LoadBalancer"
-
   }
  
   timeout = 1200  # Increase timeout to 20 minutes
@@ -213,209 +144,136 @@ resource "helm_release" "prometheus" {
   # ✅ Enable JSON logging for better observability
 
   set {
-
     name  = "prometheus.prometheusSpec.logLevel"
-
     value = "info"
-
   }
  
   set {
-
     name  = "prometheus.prometheusSpec.logFormat"
-
     value = "json"
-
   }
  
   # ✅ Configure Prometheus to scrape logs from Kubernetes Pods
 
   set {
-
     name  = "prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues"
-
     value = "false"
-
   }
  
   set {
-
     name  = "prometheus.prometheusSpec.podMonitorSelectorNilUsesHelmValues"
-
     value = "false"
-
   }
 
 }
  
 resource "helm_release" "grafana" {
-
   name       = "grafana"
-
   repository = "https://grafana.github.io/helm-charts"
-
   chart      = "grafana"
-
   namespace  = "monitoring"
-
   create_namespace = true
- 
   # ✅ Set LoadBalancer for External Access
-
   set {
-
     name  = "service.type"
-
     value = "LoadBalancer"
-
   }
  
   # ✅ Default Admin Credentials
 
   set {
-
     name  = "adminUser"
-
     value = "admin"
-
   }
  
   set {
-
     name  = "adminPassword"
-
     value = "admin123"
-
   }
  
   # ✅ Enable Dashboard Discovery
 
   set {
-
     name  = "grafana.sidecar.dashboards.enabled"
-
     value = "true"
-
   }
  
   set {
-
     name  = "grafana.sidecar.dashboards.searchNamespace"
-
     value = "ALL"
-
   }
- 
+
   # ✅ Auto-connect Prometheus as a Data Source in Grafana
 
   set {
-
     name  = "grafana.datasources.datasources.yaml.apiVersion"
-
     value = "1"
-
   }
  
   set {
-
     name  = "grafana.datasources.datasources.yaml.datasources[0].name"
-
     value = "Prometheus"
-
   }
  
   set {
-
     name  = "grafana.datasources.datasources.yaml.datasources[0].type"
-
     value = "prometheus"
 
   }
  
   set {
-
     name  = "grafana.datasources.datasources.yaml.datasources[0].url"
-
     value = "http://prometheus-kube-prometheus-prometheus.monitoring:9090"
-
   }
  
   set {
-
     name  = "grafana.datasources.datasources.yaml.datasources[0].access"
-
     value = "proxy"
-
   }
  
   set {
-
     name  = "grafana.datasources.datasources.yaml.datasources[0].isDefault"
-
-    value = "true"
-
+    value = "true
   }
  
   # ✅ Automatically Import Predefined Dashboards
 
   set {
-
     name  = "grafana.dashboardsProvider.enabled"
-
     value = "true"
-
   }
  
   set {
-
     name  = "grafana.dashboards.default.kubernetes.url"
-
     value = "https://grafana.com/api/dashboards/315/download"
-
   }
  
   set {
-
     name  = "grafana.dashboards.default.kubernetes.type"
-
     value = "json"
-
   }
  
   set {
-
     name  = "grafana.dashboards.default.node_exporter.url"
-
     value = "https://grafana.com/api/dashboards/1860/download"
-
   }
  
   set {
-
     name  = "grafana.dashboards.default.node_exporter.type"
-
     value = "json"
-
   }
  
   set {
-
     name  = "grafana.defaultDashboardsEnabled"
-
     value = "true"
-
   }
  
   # ✅ Ensure Dashboards are Auto-Synced
 
   set {
-
     name  = "grafana.sidecar.datasources.enabled"
-
     value = "true"
-
   }
-
 }
 
  
