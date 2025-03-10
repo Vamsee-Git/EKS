@@ -233,7 +233,7 @@ resource "helm_release" "grafana" {
  
   set {
     name  = "grafana.datasources.datasources.yaml.datasources[0].isDefault"
-    value = "true
+    value = "true"
   }
  
   # ✅ Automatically Import Predefined Dashboards
