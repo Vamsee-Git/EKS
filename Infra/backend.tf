@@ -1,11 +1,11 @@
-/*terraform{
+terraform{
   backend "s3" {
-    bucket         = "nsh-usecase-2"
-    key            = "EKS/terraform.tfstate"
-    region         = "us-east-1"
+    bucket         = "my-terraform-state-bucket-two-tier-vamsee"
+    key            = "terraform/eks_statefile"
+    region         = "ap-south-1"
     encrypt        = true
   }
-}*/
+}
 
 
 
