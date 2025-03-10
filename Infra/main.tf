@@ -35,5 +35,6 @@ module "eks" {
   desired_size     = var.desired_size
   min_size         = var.min_size
   max_size         = var.max_size
-  image_url        = var.image_url
+  patient_image        = var.patient_image
+  appointment_image        = var.appointment_image
 }
