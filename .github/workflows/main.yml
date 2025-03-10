@@ -86,8 +86,8 @@ jobs:
           cd Infra
           terraform plan -var-file=../Infra/env/dev/terraform.tfvars
     
-      # Step: Apply Terraform if PR is merged
-      - name: Apply Terraform on Merge the PR
+      # Step: Apply Terraform
+      - name: Apply Terraform
         run: |
           cd Infra
           terraform apply -auto-approve -var-file=../Infra/env/dev/terraform.tfvars
