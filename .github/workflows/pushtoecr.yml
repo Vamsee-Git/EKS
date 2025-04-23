@@ -19,8 +19,8 @@ jobs:
       - name: Configure AWS credentials using OIDC
         uses: aws-actions/configure-aws-credentials@v3
         with:
-          role-to-assume: arn:aws:iam::664418994073:role/eks-github-role
-          aws-region: ap-south-1
+          role-to-assume: arn:aws:iam::877786395093:role/github-oidc-vamsee
+          aws-region: us-west-2
           id-token: true
         
 
@@ -31,10 +31,10 @@ jobs:
       # Step 4: Create ECR repositories (if they don't exist)
       - name: Create ECR Repositories
         run: |
-          aws ecr describe-repositories --repository-names patient-service|| \
-            aws ecr create-repository --repository-name patient-service
-          aws ecr describe-repositories --repository-names appointment-service || \
-            aws ecr create-repository --repository-name appointment-service
+          aws ecr describe-repositories --repository-names patient-service1|| \
+            aws ecr create-repository --repository-name patient-service1
+          aws ecr describe-repositories --repository-names appointment-service2 || \
+            aws ecr create-repository --repository-name appointment-service2
       # Step 5: Build Docker images for microservices
       - name: Build Docker image for microservice1
         run: |
