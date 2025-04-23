@@ -46,11 +46,11 @@ jobs:
       # Step 6: Tag and push Docker images to ECR
       - name: Push Docker image for microservice1
         run: |
-          ECR_URI=$(aws ecr describe-repositories --repository-name patient-service --query 'repositories[0].repositoryUri' --output text)
+          ECR_URI=$(aws ecr describe-repositories --repository-name patient-service1 --query 'repositories[0].repositoryUri' --output text)
           docker tag patient-service:latest $ECR_URI:latest
           docker push $ECR_URI:latest
       - name: Push Docker image for microservice2
         run: |
-          ECR_URI=$(aws ecr describe-repositories --repository-name appointment-service --query 'repositories[0].repositoryUri' --output text)
+          ECR_URI=$(aws ecr describe-repositories --repository-name appointment-service1 --query 'repositories[0].repositoryUri' --output text)
           docker tag appointment-service:latest $ECR_URI:latest
           docker push $ECR_URI:latest
